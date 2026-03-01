@@ -44,7 +44,7 @@ class FixtureModuleTest : FreeSpec({
         }
         val stringModule = fixtureModule {
             register<String> {
-                val intGenerator = get<Int>()
+                val intGenerator = registry.generator<Int>()
                 gen { intGenerator.next(it).toString() }
             }
         }
@@ -60,7 +60,7 @@ class FixtureModuleTest : FreeSpec({
         }
         val stringModule = fixtureModule {
             register<String> {
-                val intGenerator = get<Int>(tag = "one")
+                val intGenerator = registry.generator<Int>(tag = "one")
                 gen { intGenerator.next(it).toString() }
             }
         }
@@ -76,7 +76,14 @@ class FixtureModuleTest : FreeSpec({
         }
         val stringModule = fixtureModule {
             register<String> { gen { "Joe" } }
-            register<Person> { gen { Person(get<String>().next(it), get<Int>().next(it)) } }
+            register<Person> {
+                gen {
+                    Person(
+                        registry.generator<String>().next(it),
+                        registry.generator<Int>().next(it)
+                    )
+                }
+            }
         }
         val registry = buildRegistry {
             includes(intModule, stringModule)

@@ -43,7 +43,7 @@ class RegistryTest : FreeSpec({
             val registry = buildRegistry {
                 register<String> { gen("world") }
                 register<String>(tag = "greeting") {
-                    val base = get<String>()
+                    val base = registry.generator<String>()
                     gen { rng -> "hello ${base.next(rng)}" }
                 }
             }
@@ -299,7 +299,7 @@ class RegistryTest : FreeSpec({
             val registry = buildRegistry {
                 register<Int> { gen { 1 } }
                 register<String> {
-                    val intGenerator: Generator<Int> = get()
+                    val intGenerator: Generator<Int> = registry.generator()
                     gen { intGenerator.next(it).toString() }
                 }
             }
@@ -311,7 +311,7 @@ class RegistryTest : FreeSpec({
                 register<Int>("one") { gen { 1 } }
                 register<Int> { gen { 2 } }
                 register<String> {
-                    val intGenerator: Generator<Int> = get("one")
+                    val intGenerator: Generator<Int> = registry.generator("one")
                     gen { intGenerator.next(it).toString() }
                 }
             }
@@ -322,7 +322,7 @@ class RegistryTest : FreeSpec({
             val registry = buildRegistry {
                 register<Int> { gen { 1 } }
                 register<String> {
-                    val intGenerator: Generator<Int> = get("one")
+                    val intGenerator: Generator<Int> = registry.generator("one")
                     gen { intGenerator.next(it).toString() }
                 }
             }
@@ -333,7 +333,14 @@ class RegistryTest : FreeSpec({
             val registry = buildRegistry {
                 register<Int> { gen { 20 } }
                 register<String> { gen { "Joe" } }
-                register<Person> { gen { Person(sample<String>(it), sample<Int>(it)) } }
+                register<Person> {
+                    gen {
+                        Person(
+                            registry.sample<String>(it),
+                            registry.sample<Int>(it)
+                        )
+                    }
+                }
             }
             registry.generator<Person>().next(random) shouldBe Person("Joe", 20)
         }

@@ -18,8 +18,8 @@ class OverridesTest : FreeSpec({
                 register<Person> {
                     gen {
                         Person(
-                            sample<String>(it),
-                            sample<Int>(it)
+                            sample(Person::name, it),
+                            sample(Person::age, it)
                         )
                     }
                 }
@@ -36,8 +36,8 @@ class OverridesTest : FreeSpec({
                 register<Person> {
                     gen {
                         Person(
-                            sample<String>(it),
-                            sample<Int>(it, "name")
+                            sample(Person::name, it, "name"),
+                            sample(Person::age, it)
                         )
                     }
                 }
@@ -53,8 +53,8 @@ class OverridesTest : FreeSpec({
                 register<Project> {
                     gen {
                         Project(
-                            sample<String>(it),
-                            sample<String>(it)
+                            sample(Project::name, it),
+                            sample(Project::description, it)
                         )
                     }
                 }
@@ -70,8 +70,8 @@ class OverridesTest : FreeSpec({
                 register<Project> {
                     gen {
                         Project(
-                            sample<String>(it),
-                            sample<String>(it)
+                            sample(Project::name, it),
+                            sample(Project::description, it)
                         )
                     }
                 }

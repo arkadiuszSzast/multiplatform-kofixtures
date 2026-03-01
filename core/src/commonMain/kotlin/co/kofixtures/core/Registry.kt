@@ -28,8 +28,8 @@ class FixtureRegistry @PublishedApi internal constructor(
     }
 
     inline fun <reified T> sample(
-        tag: String? = null,
         random: Random = Random.Default,
+        tag: String? = null,
         noinline block: OverrideScope.() -> Unit = {},
     ): T {
         return resolve<T>(typeOf<T>(), tag, block).next(random)

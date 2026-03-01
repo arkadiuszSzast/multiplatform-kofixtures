@@ -20,10 +20,19 @@ import kotlin.reflect.typeOf
  */
 class FactoryScope(val registry: FixtureRegistry, val activeOverrides: ActiveOverrides) {
 
-    /** Resolves [T] from registry, respecting active type-based overrides. */
-    inline fun <reified T> get(tag: String? = null): Generator<T> =
-        registry.resolve(typeOf<T>(), tag, activeOverrides)
+    inline fun <reified Owner : Any, reified Prop> get(
+        property: KProperty1<Owner, Prop>,
+        tag: String? = null,
+    ): Generator<Prop> {
+        val namedKey = NamedOverrideKey(typeOf<Owner>(), property.name)
+        @Suppress("UNCHECKED_CAST")
+        return activeOverrides.resolveNamed(namedKey) as? Generator<Prop>
+            ?: registry.resolve(typeOf<Prop>(), tag, activeOverrides)
+    }
 
-    inline fun <reified T> sample(random: Random = Random, tag: String? = null): T =
-        get<T>(tag).next(random)
+    inline fun <reified Owner : Any, reified Prop> sample(
+        property: KProperty1<Owner, Prop>,
+        random: Random = Random,
+        tag: String? = null,
+    ): Prop = get(property, tag).next(random)
 }
