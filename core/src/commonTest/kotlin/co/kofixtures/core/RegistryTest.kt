@@ -175,6 +175,30 @@ class RegistryTest : FreeSpec({
             map.values.all { it == 42 } shouldBe true
         }
 
+        "Map<K, Collection<V>> is auto-derived from K and V" {
+            val registry = buildRegistry {
+                register<String> { gen("key") }
+                register<Int> { gen(42) }
+            }
+            val map = registry.generator<Map<String, Collection<Int>>>().next(random)
+            map.shouldBeInstanceOf<Map<String, Collection<Int>>>()
+            map.keys.all { it == "key" } shouldBe true
+            map.values.all { it.all { it == 42 } } shouldBe true
+        }
+
+        "Nested map is auto-derived from K and V" {
+            val registry = buildRegistry {
+                register<String> { gen("key") }
+                register<Int> { gen(42) }
+            }
+            val map = registry.generator<Map<String, Map<String, Int>>>().next(random)
+            map.shouldBeInstanceOf<Map<String, Map<String, Int>>>()
+            map.keys.all { it == "key" } shouldBe true
+            map.values.all {
+                it.all { it.key == "key" && it.value == 42 }
+            } shouldBe true
+        }
+
         "List<T> throws when T is not registered" {
             val registry = buildRegistry {}
             shouldThrow<IllegalStateException> {

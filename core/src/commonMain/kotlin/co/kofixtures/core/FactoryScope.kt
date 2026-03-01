@@ -18,12 +18,12 @@ import kotlin.reflect.typeOf
  *
  * Extended in kofixture-kotest with getArb() sugar.
  */
-class FactoryScope(val registry: FixtureRegistry) {
+class FactoryScope(val registry: FixtureRegistry, val activeOverrides: ActiveOverrides) {
 
     /** Resolves [T] from registry, respecting active type-based overrides. */
     inline fun <reified T> get(tag: String? = null): Generator<T> =
-        registry.resolve(typeOf<T>(), tag)
+        registry.resolve(typeOf<T>(), tag, activeOverrides)
 
     inline fun <reified T> sample(random: Random = Random, tag: String? = null): T =
-        registry.resolve<T>(typeOf<T>(), tag).next(random)
+        get<T>(tag).next(random)
 }

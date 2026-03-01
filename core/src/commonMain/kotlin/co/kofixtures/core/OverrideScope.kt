@@ -13,8 +13,6 @@ class OverrideScope(val registry: FixtureRegistry) {
         collectionConfig = CollectionConfigBuilder().apply(block).build()
     }
 
-    // --- type-based ---
-
     @JvmName("override_type")
     inline fun <reified T> override(noinline valueProvider: OverrideScope.() -> T) {
         val value = valueProvider(this)

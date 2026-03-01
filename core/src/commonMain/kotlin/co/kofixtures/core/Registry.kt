@@ -48,8 +48,9 @@ class FixtureRegistry @PublishedApi internal constructor(
      *
      * Named overrides are checked in FactoryScope.get(property), not here.
      */
+    @PublishedApi
     @Suppress("UNCHECKED_CAST")
-    private fun <T> resolve(
+    internal fun <T> resolve(
         type: KType,
         tag: String? = null,
         active: ActiveOverrides,
@@ -57,7 +58,7 @@ class FixtureRegistry @PublishedApi internal constructor(
         // 1. Type-based override
         active.resolveType(type)?.let { return it as Generator<T> }
 
-        val scope = FactoryScope(this)
+        val scope = FactoryScope(this, active)
 
         // 2. Registry with tag
         if (tag != null) {
