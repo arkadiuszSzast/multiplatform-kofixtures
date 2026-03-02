@@ -1,7 +1,6 @@
 package co.kofixtures.kotest
 
 import co.kofixtures.core.FixtureOverride
-import co.kofixtures.core.Generator
 import co.kofixtures.core.NamedOverrideKey
 import co.kofixtures.core.OverrideScope
 import io.kotest.property.Arb
@@ -27,8 +26,10 @@ inline fun <reified Owner : Any, reified Prop> OverrideScope.override(
     property: KProperty1<Owner, Prop>,
     arb: Arb<Prop>,
 ) {
-    addOverride(FixtureOverride.Named(
-        key = NamedOverrideKey(typeOf<Owner>(), property.name),
-        gen = arb.asGenerator(),
-    ))
+    addOverride(
+        FixtureOverride.Named(
+            key = NamedOverrideKey(typeOf<Owner>(), property.name),
+            gen = arb.asGenerator(),
+        ),
+    )
 }

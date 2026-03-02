@@ -7,7 +7,9 @@ import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.next
 import kotlin.random.Random
 
-class ArbGenerator<T>(private val arb: Arb<T>) : Generator<T>{
+class ArbGenerator<T>(
+    private val arb: Arb<T>,
+) : Generator<T> {
     override fun next(random: Random): T = arb.next(RandomSource.seeded(random.nextLong()))
 
     fun unwrap(): Arb<T> = arb

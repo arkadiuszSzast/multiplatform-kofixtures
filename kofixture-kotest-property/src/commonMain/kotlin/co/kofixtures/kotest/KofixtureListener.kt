@@ -3,7 +3,9 @@ package co.kofixtures.kotest
 import io.kotest.core.listeners.TestListener
 import io.kotest.core.spec.Spec
 
-class KofixtureListener(private val spec: KofixtureTest) : TestListener {
+class KofixtureListener(
+    private val spec: KofixtureTest,
+) : TestListener {
     override suspend fun beforeSpec(spec: Spec) {
         KofixtureContext.buildFor(this.spec)
     }

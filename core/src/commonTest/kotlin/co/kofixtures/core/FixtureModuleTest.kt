@@ -80,7 +80,7 @@ class FixtureModuleTest : FreeSpec({
                 gen {
                     Person(
                         registry.generator<String>().next(it),
-                        registry.generator<Int>().next(it)
+                        registry.generator<Int>().next(it),
                     )
                 }
             }
@@ -138,5 +138,4 @@ class FixtureModuleTest : FreeSpec({
         registry.generator<List<Int>>().next(Random.Default).shouldHaveSize(5)
         registry.generator<Set<Int>>().next(Random.Default).shouldHaveSize(6)
     }
-
 })

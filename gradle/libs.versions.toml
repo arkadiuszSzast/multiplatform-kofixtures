@@ -1,5 +1,7 @@
 [versions]
 kotlin = "2.3.10"
+spotless = "8.2.1"
+ktlint = "1.8.0"
 ksp = "2.3.6"
 kotest = "6.1.4"
 
@@ -15,3 +17,4 @@ ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.re
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

@@ -18,8 +18,10 @@ import kotlin.reflect.typeOf
  *
  * Extended in kofixture-kotest with getArb() sugar.
  */
-class FactoryScope(val registry: FixtureRegistry, val activeOverrides: ActiveOverrides) {
-
+class FactoryScope(
+    val registry: FixtureRegistry,
+    val activeOverrides: ActiveOverrides,
+) {
     inline fun <reified Owner : Any, reified Prop> get(
         property: KProperty1<Owner, Prop>,
         tag: String? = null,

@@ -3,6 +3,7 @@ package co.kofixtures.core
 import co.kofixtures.core.utils.Person
 import co.kofixtures.core.utils.Project
 import co.kofixtures.core.utils.ProjectAssignment
+import co.kofixtures.core.utils.Team
 import co.kofixtures.core.utils.gen
 import co.kofixtures.core.utils.random
 import io.kotest.core.spec.style.FreeSpec
@@ -20,7 +21,7 @@ class OverridesTest : FreeSpec({
                     gen {
                         Person(
                             sample(Person::name, it),
-                            sample(Person::age, it)
+                            sample(Person::age, it),
                         )
                     }
                 }
@@ -38,7 +39,7 @@ class OverridesTest : FreeSpec({
                     gen {
                         Person(
                             sample(Person::name, it, "name"),
-                            sample(Person::age, it)
+                            sample(Person::age, it),
                         )
                     }
                 }
@@ -55,7 +56,7 @@ class OverridesTest : FreeSpec({
                     gen {
                         Project(
                             sample(Project::name, it),
-                            sample(Project::description, it)
+                            sample(Project::description, it),
                         )
                     }
                 }
@@ -72,7 +73,7 @@ class OverridesTest : FreeSpec({
                     gen {
                         Project(
                             sample(Project::name, it),
-                            sample(Project::description, it)
+                            sample(Project::description, it),
                         )
                     }
                 }
@@ -91,7 +92,7 @@ class OverridesTest : FreeSpec({
                 gen {
                     Person(
                         sample(Person::name, it),
-                        sample(Person::age, it)
+                        sample(Person::age, it),
                     )
                 }
             }
@@ -99,7 +100,7 @@ class OverridesTest : FreeSpec({
                 gen {
                     Project(
                         sample(Project::name, it),
-                        sample(Project::description, it)
+                        sample(Project::description, it),
                     )
                 }
             }
@@ -107,7 +108,7 @@ class OverridesTest : FreeSpec({
                 gen {
                     ProjectAssignment(
                         sample(ProjectAssignment::project, it),
-                        sample(ProjectAssignment::user, it)
+                        sample(ProjectAssignment::user, it),
                     )
                 }
             }
@@ -118,10 +119,11 @@ class OverridesTest : FreeSpec({
                 gen { "Joe" }
             }
             override(Person::age) { gen { 20 } }
-        }.next(random) shouldBe ProjectAssignment(
-            project = Project("field", "field"),
-            user = Person("Joe", 20)
-        )
+        }.next(random) shouldBe
+            ProjectAssignment(
+                project = Project("field", "field"),
+                user = Person("Joe", 20),
+            )
     }
 
     "when generator is not defined still can be provided in override without errors" {
@@ -131,7 +133,7 @@ class OverridesTest : FreeSpec({
                 gen {
                     Person(
                         sample(Person::name, it),
-                        sample(Person::age, it)
+                        sample(Person::age, it),
                     )
                 }
             }
@@ -149,7 +151,7 @@ class OverridesTest : FreeSpec({
                 gen {
                     Project(
                         sample(Project::name, it),
-                        sample(Project::description, it)
+                        sample(Project::description, it),
                     )
                 }
             }
@@ -168,7 +170,7 @@ class OverridesTest : FreeSpec({
                 gen {
                     Project(
                         sample(Project::name, it),
-                        sample(Project::description, it)
+                        sample(Project::description, it),
                     )
                 }
             }
@@ -178,8 +180,7 @@ class OverridesTest : FreeSpec({
         }.next(random) shouldBe Project("field", "Joe")
     }
 
-
-    "can override nested generator with const value" - {
+    "can override nested generator with const value" {
         val registry = buildRegistry {
             register<String> { gen { "field" } }
             register<Int> { gen { 30 } }
@@ -187,7 +188,7 @@ class OverridesTest : FreeSpec({
                 gen {
                     Person(
                         sample(Person::name, it),
-                        sample(Person::age, it)
+                        sample(Person::age, it),
                     )
                 }
             }
@@ -195,7 +196,7 @@ class OverridesTest : FreeSpec({
                 gen {
                     Project(
                         sample(Project::name, it),
-                        sample(Project::description, it)
+                        sample(Project::description, it),
                     )
                 }
             }
@@ -203,7 +204,7 @@ class OverridesTest : FreeSpec({
                 gen {
                     ProjectAssignment(
                         sample(ProjectAssignment::project, it),
-                        sample(ProjectAssignment::user, it)
+                        sample(ProjectAssignment::user, it),
                     )
                 }
             }
@@ -214,7 +215,42 @@ class OverridesTest : FreeSpec({
             override(Person::age) { 20 }
         }.next(random) shouldBe ProjectAssignment(
             project = Project("field", "field"),
-            user = Person("Joe", 20)
+            user = Person("Joe", 20),
         )
+    }
+
+    "can override collection config" {
+        var counter = 0
+        val registry = buildRegistry {
+            collections {
+                listSize = 1..1
+            }
+            register<String> { gen { "item" } }
+            register<Int> { gen { counter++ } }
+            register<Person> {
+                gen {
+                    Person(
+                        sample(Person::name, it),
+                        sample(Person::age, it),
+                    )
+                }
+            }
+            register<Team> {
+                gen {
+                    Team(sample(Team::members, it))
+                }
+            }
+        }
+        registry.generator<Team> {
+            collections { listSize = 2..2 }
+        }.next(random).members.size shouldBe 2
+
+        registry.generator<Set<Int>> {
+            collections { setSize = 3..3 }
+        }.next(random).size shouldBe 3
+
+        registry.generator<Map<Int, Int>> {
+            collections { mapSize = 4..4 }
+        }.next(random).size shouldBe 4
     }
 })

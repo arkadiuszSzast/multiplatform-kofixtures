@@ -2,7 +2,10 @@ package co.kofixtures.core
 
 import kotlin.reflect.KType
 
-data class NamedOverrideKey(val ownerType: KType, val paramName: String)
+data class NamedOverrideKey(
+    val ownerType: KType,
+    val paramName: String,
+)
 
 sealed interface FixtureOverride {
     class TypeBased(

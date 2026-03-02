@@ -8,7 +8,6 @@ import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
 interface KofixtureTest {
-
     val fixtureModules: List<FixtureModule> get() = emptyList()
 
     fun <T> sample(
@@ -17,7 +16,8 @@ interface KofixtureTest {
         block: OverrideScope.() -> Unit = {},
     ): ReadOnlyProperty<Any?, T> = ReadOnlyProperty { _, _ ->
         val registry = KofixtureContext.registryFor(this)
-        registry.resolveWithScope<T>(type, tag, OverrideScope(registry).apply(block))
+        registry
+            .resolveWithScope<T>(type, tag, OverrideScope(registry).apply(block))
             .next(kotlin.random.Random.Default)
     }
 
@@ -27,11 +27,11 @@ interface KofixtureTest {
         block: OverrideScope.() -> Unit = {},
     ): ReadOnlyProperty<Any?, Arb<T>> = ReadOnlyProperty { _, _ ->
         val registry = KofixtureContext.registryFor(this)
-        registry.resolveWithScope<T>(type, tag, OverrideScope(registry).apply(block))
+        registry
+            .resolveWithScope<T>(type, tag, OverrideScope(registry).apply(block))
             .asArb()
     }
 }
-
 
 inline fun <reified T> KofixtureTest.sample(
     tag: String? = null,

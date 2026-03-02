@@ -210,7 +210,9 @@ class RegistryTest : FreeSpec({
             val registry = buildRegistry {
                 register<String> { gen("item") }
             }
-            registry.generator<List<String?>>().next(random)
+            registry
+                .generator<List<String?>>()
+                .next(random)
                 .shouldBeInstanceOf<List<String?>>()
         }
     }
@@ -337,7 +339,7 @@ class RegistryTest : FreeSpec({
                     gen {
                         Person(
                             registry.sample<String>(it),
-                            registry.sample<Int>(it)
+                            registry.sample<Int>(it),
                         )
                     }
                 }

@@ -7,8 +7,8 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.typeOf
 
-class FixtureRegistry @PublishedApi internal constructor(
-    @PublishedApi internal val factories: Map<RegistryKey, (FactoryScope) -> Generator<*>>,
+class FixtureRegistry internal constructor(
+    internal val factories: Map<RegistryKey, (FactoryScope) -> Generator<*>>,
     val collectionConfig: CollectionConfig = CollectionConfig(),
 ) {
     private val nullableIndex: Map<Triple<KClassifier?, List<KTypeProjection>, String?>, KType> =
@@ -18,10 +18,18 @@ class FixtureRegistry @PublishedApi internal constructor(
                 Triple(key.type.classifier, key.type.arguments, key.tag) to key.type
             }
 
-    inline fun <reified T> generator(tag: String? = null, noinline block: OverrideScope.() -> Unit = {}): Generator<T> = resolve(typeOf<T>(), tag, block)
+    inline fun <reified T> generator(
+        tag: String? = null,
+        noinline block: OverrideScope.() -> Unit = {
+        },
+    ): Generator<T> = resolve(typeOf<T>(), tag, block)
 
     @PublishedApi
-    internal fun <T> resolve(type: KType, tag: String? = null, block: OverrideScope.() -> Unit = {}): Generator<T> {
+    internal fun <T> resolve(
+        type: KType,
+        tag: String? = null,
+        block: OverrideScope.() -> Unit = {},
+    ): Generator<T> {
         val scope = OverrideScope(this).apply(block)
         val active = ActiveOverrides.from(scope)
         return resolve(type, tag, active)
@@ -31,9 +39,7 @@ class FixtureRegistry @PublishedApi internal constructor(
         random: Random = Random.Default,
         tag: String? = null,
         noinline block: OverrideScope.() -> Unit = {},
-    ): T {
-        return resolve<T>(typeOf<T>(), tag, block).next(random)
-    }
+    ): T = resolve<T>(typeOf<T>(), tag, block).next(random)
 
     /**
      * Recursive type resolver.
@@ -87,26 +93,30 @@ class FixtureRegistry @PublishedApi internal constructor(
         val tagInfo = if (tag != null) " (tag=\"$tag\")" else ""
         error(
             "No generator registered for $type$tagInfo.\n" +
-                    "Registered keys: ${factories.keys.joinToString()}"
+                "Registered keys: ${factories.keys.joinToString()}",
         )
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T> deriveCollection(type: KType, active: ActiveOverrides): Generator<T>? {
+    private fun <T> deriveCollection(
+        type: KType,
+        active: ActiveOverrides,
+    ): Generator<T>? {
         val classifier = type.classifier as? KClass<*> ?: return null
         val args = type.arguments
 
         return when (classifier) {
             List::class, Collection::class, Iterable::class -> {
-                val range = collectionConfig.listSize
+                val range = active.collectionConfig?.listSize ?: collectionConfig.listSize
                 val elementType = args.firstOrNull()?.type ?: return null
                 val elementGen = resolve<Any?>(elementType, active = active)
                 Generator { random ->
                     List(random.nextInt(range.first, range.last + 1)) { elementGen.next(random) } as T
                 }
             }
+
             Set::class -> {
-                val range = collectionConfig.setSize
+                val range = active.collectionConfig?.setSize ?: collectionConfig.setSize
                 val elementType = args.firstOrNull()?.type ?: return null
                 val elementGen = resolve<Any?>(elementType, active = active)
                 Generator { random ->
@@ -115,11 +125,12 @@ class FixtureRegistry @PublishedApi internal constructor(
                     } as T
                 }
             }
+
             Map::class -> {
-                val range = collectionConfig.mapSize
-                val keyType   = args.getOrNull(0)?.type ?: return null
+                val range = active.collectionConfig?.mapSize ?: collectionConfig.mapSize
+                val keyType = args.getOrNull(0)?.type ?: return null
                 val valueType = args.getOrNull(1)?.type ?: return null
-                val keyGen   = resolve<Any?>(keyType, active = active)
+                val keyGen = resolve<Any?>(keyType, active = active)
                 val valueGen = resolve<Any?>(valueType, active = active)
                 Generator { random ->
                     buildMap {
@@ -129,7 +140,10 @@ class FixtureRegistry @PublishedApi internal constructor(
                     } as T
                 }
             }
-            else -> null
+
+            else -> {
+                null
+            }
         }
     }
 }
@@ -165,5 +179,4 @@ inline fun <reified T> FixtureRegistryBuilder.register(
     noinline factory: FactoryScope.() -> Generator<T>,
 ) = register(typeOf<T>(), tag, factory)
 
-fun buildRegistry(block: FixtureRegistryBuilder.() -> Unit): FixtureRegistry =
-    FixtureRegistryBuilder().apply(block).build()
+fun buildRegistry(block: FixtureRegistryBuilder.() -> Unit): FixtureRegistry = FixtureRegistryBuilder().apply(block).build()

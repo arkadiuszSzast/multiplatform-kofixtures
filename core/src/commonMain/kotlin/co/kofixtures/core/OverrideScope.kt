@@ -5,16 +5,21 @@ import kotlin.jvm.JvmName
 import kotlin.reflect.KProperty1
 import kotlin.reflect.typeOf
 
-
-class PropOverrideScope<Prop>(val registry: FixtureRegistry) {
+class PropOverrideScope<Prop>(
+    val registry: FixtureRegistry,
+) {
     fun gen(block: () -> Prop): Generator<Prop> = Generator { _ -> block() }
 }
 
-class TypeOverrideScope<T>(val registry: FixtureRegistry) {
+class TypeOverrideScope<T>(
+    val registry: FixtureRegistry,
+) {
     fun gen(block: () -> T): Generator<T> = Generator { _ -> block() }
 }
 
-class OverrideScope(val registry: FixtureRegistry) {
+class OverrideScope(
+    val registry: FixtureRegistry,
+) {
     @PublishedApi
     internal val fixturesOverrides = mutableListOf<FixtureOverride>()
 
@@ -27,25 +32,25 @@ class OverrideScope(val registry: FixtureRegistry) {
     @JvmName("override_type")
     @OptIn(ExperimentalTypeInference::class)
     @OverloadResolutionByLambdaReturnType
-    inline fun <reified T> override(
-        crossinline block: TypeOverrideScope<T>.() -> T,
-    ) {
-        addOverride(FixtureOverride.TypeBased(
-            typeOf<T>(),
-            Generator { _ -> TypeOverrideScope<T>(registry).block() },
-        ))
+    inline fun <reified T> override(crossinline block: TypeOverrideScope<T>.() -> T) {
+        addOverride(
+            FixtureOverride.TypeBased(
+                typeOf<T>(),
+                Generator { _ -> TypeOverrideScope<T>(registry).block() },
+            ),
+        )
     }
 
     @JvmName("override_type_gen")
     @OptIn(ExperimentalTypeInference::class)
     @OverloadResolutionByLambdaReturnType
-    inline fun <reified T> override(
-        block: TypeOverrideScope<T>.() -> Generator<T>,
-    ) {
-        addOverride(FixtureOverride.TypeBased(
-            typeOf<T>(),
-            TypeOverrideScope<T>(registry).block(),
-        ))
+    inline fun <reified T> override(block: TypeOverrideScope<T>.() -> Generator<T>) {
+        addOverride(
+            FixtureOverride.TypeBased(
+                typeOf<T>(),
+                TypeOverrideScope<T>(registry).block(),
+            ),
+        )
     }
 
     @JvmName("override_type_named")
@@ -59,7 +64,7 @@ class OverrideScope(val registry: FixtureRegistry) {
             FixtureOverride.Named(
                 key = NamedOverrideKey(typeOf<Owner>(), property.name),
                 gen = Generator { _ -> PropOverrideScope<Prop>(registry).block() },
-            )
+            ),
         )
     }
 
@@ -74,7 +79,7 @@ class OverrideScope(val registry: FixtureRegistry) {
             FixtureOverride.Named(
                 key = NamedOverrideKey(typeOf<Owner>(), property.name),
                 gen = PropOverrideScope<Prop>(registry).block(),
-            )
+            ),
         )
     }
 
@@ -83,5 +88,6 @@ class OverrideScope(val registry: FixtureRegistry) {
     }
 
     fun getOverrides() = fixturesOverrides.toList()
+
     fun getOverriddenCollectionConfig() = collectionConfig
 }

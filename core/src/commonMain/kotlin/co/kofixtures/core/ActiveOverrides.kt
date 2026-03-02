@@ -9,13 +9,13 @@ import kotlin.reflect.KType
 class ActiveOverrides private constructor(
     private val byType: Map<KType, Generator<*>>,
     private val byName: Map<NamedOverrideKey, Generator<*>>,
-    private val collectionConfig: CollectionConfig?
+    val collectionConfig: CollectionConfig?,
 ) {
     fun resolveType(type: KType): Generator<*>? = byType[type]
+
     fun resolveNamed(key: NamedOverrideKey): Generator<*>? = byName[key]
 
     companion object {
-
         fun from(overrideScope: OverrideScope): ActiveOverrides {
             val fixturesOverrides = overrideScope.getOverrides()
             val byType = mutableMapOf<KType, Generator<*>>()
