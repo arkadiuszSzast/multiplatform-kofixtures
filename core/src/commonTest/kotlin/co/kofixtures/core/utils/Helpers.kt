@@ -11,3 +11,5 @@ fun <T> gen(block: (Random) -> T) = Generator(block)
 data class Person(val name: String,  val age: Int)
 
 data class Project(val name: String, val description: String)
+
+data class ProjectAssignment(val project: Project, val user: Person)
