@@ -15,9 +15,7 @@ class ArbGenerator<T>(
     fun unwrap(): Arb<T> = arb
 }
 
-fun <T> Arb<T>.asGenerator(): Generator<T> = ArbGenerator(this)
-
 fun <T> Generator<T>.asArb(): Arb<T> = when (this) {
-    is ArbGenerator<T> -> this.unwrap()
+    is ArbGenerator<T> -> unwrap()
     else -> arbitrary { rs -> this@asArb.next(rs.random) }
 }

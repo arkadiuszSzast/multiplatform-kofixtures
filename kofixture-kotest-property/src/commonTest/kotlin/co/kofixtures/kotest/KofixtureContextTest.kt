@@ -1,40 +1,48 @@
 package co.kofixtures.kotest
 
-import co.kofixtures.core.fixtureModule
+import co.kofixtures.core.Generator
+import co.kofixtures.kotest.utils.Person
+import co.kofixtures.kotest.utils.personModule
+import co.kofixtures.kotest.utils.random
 import io.kotest.core.extensions.Extension
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.should
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldHaveLength
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.string
+import io.kotest.property.arbitrary.next
 
-data class Person(
-    val name: String,
-    val age: Int,
-)
-
-data class User(
-    val name: String,
-    val surname: String,
-)
-
-private val personModule =
-    fixtureModule {
-        kotest {
-            register<String>(Arb.string(3..10))
-            register<Int>(Arb.int(1..99))
-            register<Person> {
-                val nameArb = getArb(Person::name)
-                val ageArb = getArb<Int>()
-                arbitrary { Person(nameArb.bind(), ageArb.bind()) }
-            }
-        }
-    }
-
-class KofixtureContextTest :
-    FreeSpec(),
-    KofixtureTest {
+class KofixtureContextTest : FreeSpec(), KofixtureTest {
     override val fixtureModules = listOf(personModule)
     override val extensions: List<Extension>
         get() = super.extensions + KofixtureListener(this)
+
+    init {
+        "should generate generate person" {
+            registry().sample<Person>().should {
+                it.name.shouldHaveLength(3)
+                it.age shouldBe 10
+            }
+        }
+
+        "should generate generate person using delegate" {
+            val person: Person by sample()
+            person.name.shouldHaveLength(3)
+            person.age shouldBe 10
+        }
+
+        "should get person arb using delegate" {
+            val personArb: Arb<Person> by arb()
+            val person = personArb.next()
+            person.name.shouldHaveLength(3)
+            person.age shouldBe 10
+        }
+
+        "should get person generator using delegate" {
+            val personGenerator: Generator<Person> by generator()
+            val person = personGenerator.next(random)
+            person.name.shouldHaveLength(3)
+            person.age shouldBe 10
+        }
+    }
 }

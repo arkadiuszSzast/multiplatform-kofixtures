@@ -1,5 +1,6 @@
 package co.kofixtures.core
 
+import kotlin.experimental.ExperimentalTypeInference
 import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
@@ -24,8 +25,7 @@ class FixtureRegistry internal constructor(
         },
     ): Generator<T> = resolve(typeOf<T>(), tag, block)
 
-    @PublishedApi
-    internal fun <T> resolve(
+    fun <T> resolve(
         type: KType,
         tag: String? = null,
         block: OverrideScope.() -> Unit = {},
@@ -174,6 +174,8 @@ class FixtureRegistryBuilder {
     fun build(): FixtureRegistry = FixtureRegistry(factories.toMap(), collectionConfig)
 }
 
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
 inline fun <reified T> FixtureRegistryBuilder.register(
     tag: String? = null,
     noinline factory: FactoryScope.() -> Generator<T>,
