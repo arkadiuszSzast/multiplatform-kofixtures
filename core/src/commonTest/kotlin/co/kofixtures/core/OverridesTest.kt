@@ -27,7 +27,7 @@ class OverridesTest : FreeSpec({
                 }
             }
             registry.generator<Person> {
-                override<Int> { gen { 18 } }
+                override<Int> { 18 }
             }.next(random) shouldBe Person("Joe", 18)
         }
 
@@ -45,7 +45,7 @@ class OverridesTest : FreeSpec({
                 }
             }
             registry.generator<Person> {
-                override<String> { gen { "Jane" } }
+                override<String> { "Jane" }
             }.next(random) shouldBe Person("Jane", 20)
         }
 
@@ -62,7 +62,7 @@ class OverridesTest : FreeSpec({
                 }
             }
             registry.generator<Project> {
-                override<String> { gen { "override" } }
+                override<String> { "override" }
             }.next(random) shouldBe Project("override", "override")
         }
 
@@ -79,7 +79,7 @@ class OverridesTest : FreeSpec({
                 }
             }
             registry.generator<Project> {
-                override(Project::name) { gen { "override" } }
+                override(Project::name) { "override" }
             }.next(random) shouldBe Project("override", "field")
         }
     }
@@ -115,10 +115,8 @@ class OverridesTest : FreeSpec({
         }
 
         registry.generator<ProjectAssignment> {
-            override(Person::name) {
-                gen { "Joe" }
-            }
-            override(Person::age) { gen { 20 } }
+            override(Person::name) { "Joe" }
+            override(Person::age) { 20 }
         }.next(random) shouldBe
             ProjectAssignment(
                 project = Project("field", "field"),
@@ -139,7 +137,7 @@ class OverridesTest : FreeSpec({
             }
         }
         registry.generator<Person> {
-            override(Person::age) { gen { 20 } }
+            override(Person::age) { 20 }
         }.next(random) shouldBe Person("Joe", 20)
     }
 
