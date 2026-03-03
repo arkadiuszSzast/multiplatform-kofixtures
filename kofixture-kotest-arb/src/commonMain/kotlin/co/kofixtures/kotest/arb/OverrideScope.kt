@@ -1,8 +1,6 @@
-package co.kofixtures.kotest
+package co.kofixtures.kotest.arb
 
-import co.kofixtures.core.FactoryScope
 import co.kofixtures.core.FixtureOverride
-import co.kofixtures.core.Generator
 import co.kofixtures.core.NamedOverrideKey
 import co.kofixtures.core.OverrideScope
 import co.kofixtures.core.PropOverrideScope

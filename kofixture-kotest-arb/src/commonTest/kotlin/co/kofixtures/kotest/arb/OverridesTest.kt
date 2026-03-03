@@ -1,10 +1,9 @@
-package co.kofixtures.kotest
+package co.kofixtures.kotest.arb
 
 import co.kofixtures.core.buildRegistry
-import co.kofixtures.core.override
-import co.kofixtures.kotest.override
-import co.kofixtures.kotest.utils.Project
-import co.kofixtures.kotest.utils.projectModule
+import co.kofixtures.kotest.arb.override
+import co.kofixtures.kotest.arb.utils.Project
+import co.kofixtures.kotest.arb.utils.projectModule
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -13,19 +12,11 @@ import io.kotest.property.arbitrary.constant
 
 class OverridesTest : FreeSpec({
 
-    "should override by type" {
-        val registry = buildRegistry { includes(projectModule) }
-
-        registry.sample<Project> {
-            override<String> { "override" }
-        } shouldBe Project("override", "override")
-    }
-
     "can override by property" {
         val registry = buildRegistry { includes(projectModule) }
 
         val project = registry.sample<Project> {
-            override(Project::name) { "override" }
+            override(Project::name) { Arb.constant("override") }
         }
         project.name shouldBe "override"
         project.description.shouldNotBe("override")

@@ -1,8 +1,11 @@
-package co.kofixtures.kotest
+package co.kofixtures.core
 
 import co.kofixtures.core.FixtureModule
 import co.kofixtures.core.FixtureRegistry
 import co.kofixtures.core.buildRegistry
+import kotlin.collections.forEach
+import kotlin.collections.ifEmpty
+import kotlin.collections.set
 
 /**
  * Global context managing per-spec [FixtureRegistry] instances.
@@ -15,8 +18,7 @@ object KofixtureContext {
     @PublishedApi
     internal val registries: MutableMap<KofixtureTest, FixtureRegistry> = mutableMapOf()
 
-    @PublishedApi
-    internal fun registryFor(spec: KofixtureTest): FixtureRegistry = registries[spec] ?: error(
+    fun registryFor(spec: KofixtureTest): FixtureRegistry = registries[spec] ?: error(
         "No fixture registry found for ${spec::class.simpleName}. " +
             "Make sure KofixtureListener is configured for the spec or call buildFor() manually.",
     )

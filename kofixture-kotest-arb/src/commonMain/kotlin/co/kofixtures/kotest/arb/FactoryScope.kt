@@ -1,4 +1,4 @@
-package co.kofixtures.kotest
+package co.kofixtures.kotest.arb
 
 import co.kofixtures.core.FactoryScope
 import co.kofixtures.core.FixtureRegistryBuilder

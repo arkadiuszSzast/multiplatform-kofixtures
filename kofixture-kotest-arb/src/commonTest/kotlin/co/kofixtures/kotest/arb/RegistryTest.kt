@@ -1,11 +1,11 @@
-package co.kofixtures.kotest
+package co.kofixtures.kotest.arb
 
 import co.kofixtures.core.buildRegistry
 import co.kofixtures.core.register
-import co.kofixtures.kotest.register
-import co.kofixtures.kotest.utils.Person
-import co.kofixtures.kotest.utils.gen
-import co.kofixtures.kotest.utils.random
+import co.kofixtures.kotest.arb.register
+import co.kofixtures.kotest.arb.utils.Person
+import co.kofixtures.kotest.arb.utils.gen
+import co.kofixtures.kotest.arb.utils.random
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe

@@ -1,10 +1,10 @@
-package co.kofixtures.kotest.utils
+package co.kofixtures.kotest.arb.utils
 
 import co.kofixtures.core.Generator
 import co.kofixtures.core.fixtureModule
 import co.kofixtures.core.register
-import co.kofixtures.kotest.getArb
-import co.kofixtures.kotest.register
+import co.kofixtures.kotest.arb.getArb
+import co.kofixtures.kotest.arb.register
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.string

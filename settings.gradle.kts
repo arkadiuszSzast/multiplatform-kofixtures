@@ -14,6 +14,6 @@ dependencyResolutionManagement {
 }
 
 include(":core")
-include(":kofixture-kotest-property")
+include(":kofixture-kotest-arb")
 include(":kofixture-annotations")
 include(":kofixture-ksp")

@@ -1,4 +1,4 @@
-package co.kofixtures.kotest
+package co.kofixtures.kotest.arb
 
 import co.kofixtures.core.Generator
 import io.kotest.property.Arb
