@@ -1,17 +1,16 @@
 plugins {
-    // kotlin.jvm is already on the classpath via buildSrc — use id without version
     id("org.jetbrains.kotlin.jvm")
     alias(libs.plugins.ksp)
 }
 
 dependencies {
-    compileOnly(libs.ksp.api)
     implementation(project(":core"))
+    testCompileOnly(project(":kofixture-ksp"))
+    kspTest(project(":kofixture-ksp"))
 
     testImplementation(kotlin("test"))
-    testImplementation(libs.ksp.api)
-    testImplementation("dev.zacsweers.kctfork:core:0.12.1")
-    testImplementation("dev.zacsweers.kctfork:ksp:0.12.1")
+    testImplementation(libs.kotest.runner.junit5)
+    testImplementation(libs.kotest.assertions.core)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {

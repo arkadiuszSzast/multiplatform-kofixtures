@@ -182,3 +182,14 @@ inline fun <reified T> FixtureRegistryBuilder.register(
 ) = register(typeOf<T>(), tag, factory)
 
 fun buildRegistry(block: FixtureRegistryBuilder.() -> Unit): FixtureRegistry = FixtureRegistryBuilder().apply(block).build()
+
+/**
+ * Public helper for KSP-generated code.
+ * Resolves a [Generator] for [type] respecting the provided [activeOverrides].
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> FixtureRegistry.generatorFor(
+    type: KType,
+    tag: String?,
+    activeOverrides: ActiveOverrides,
+): Generator<T> = resolve(type, tag, activeOverrides)

@@ -14,5 +14,4 @@ kotlin {
         jvmTest.dependencies {
             implementation(libs.kotest.runner.junit5)
         }
-    }
-}
+    }}
